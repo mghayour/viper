@@ -7,37 +7,94 @@ $products  = new Cuztom_Post_Type( 'Products', array(
 ) );
 
 
+/* Get list of products from Cart66 Cloud */
+if(CLOUD) {
+  $cloud_product_names = array('' => __('No product selected'));
+  try {
+    $lib = new CC_Library();
+    $cloud_products = $lib->get_products();
+    if(is_array($cloud_products) && count($cloud_products)) {
+      foreach($cloud_products as $p) {
+        $sku = $p['sku'];
+        $name = $p['name'];
+        $cloud_product_names[$sku] = $name;
+      }
+    }
+  }
+  catch(CC_Exception $e) {
+    CC_Log::write('Unable to retrieve Cart66 Cloud products for Viper meta box');
+  }
 
-/* Adds metaboxes to products */
+  // Change the way the meta box works if Cart66 Cloud is installed
+  $products->add_meta_box(
+     'Product info',
+      array(
 
-$products->add_meta_box(
-   'Product info',
-    array(
-    
-    array(
-        'name'          => 'product_link',
-        'label'         => 'Product url',
-        'description'   => 'Link to product',
-        'type'          => 'text',
-    ),
+        array(
+          'name' => 'product_sku',
+          'label' => 'Product',
+          'description' => 'Select a product',
+          'type' => 'select',
+          'options' => $cloud_product_names,
+          'default_value' => ''
+        ),
+      
+        array(
+            'name'          => 'product_link',
+            'label'         => 'Product url',
+            'description'   => 'Link to product',
+            'type'          => 'hidden',
+        ),
 
-   array(
-        'name'          => 'product_description',
-        'label'         => 'Product description',
-        'description'   => 'One line description of product',
-        'type'          => 'textarea',
-    ),
+       array(
+            'name'          => 'product_description',
+            'label'         => 'Product description',
+            'description'   => 'One line description of product',
+            'type'          => 'textarea',
+        ),
 
-   array(
-        'name'          => 'product_price',
-        'label'         => 'Product price',
-        'description'   => 'Price of the product',
-        'type'          => 'text',
-    )
-       
-    
-    ));
-    
+       array(
+            'name'          => 'product_price',
+            'label'         => 'Product price',
+            'description'   => 'Price of the product',
+            'type'          => 'hidden',
+        )
+         
+      
+   ));
+}
+else {
+
+  /* Adds metaboxes to products */
+
+  $products->add_meta_box(
+     'Product info',
+     array(
+      
+        array(
+            'name'          => 'product_link',
+            'label'         => 'Product url',
+            'description'   => 'Link to product',
+            'type'          => 'text',
+        ),
+
+       array(
+            'name'          => 'product_description',
+            'label'         => 'Product description',
+            'description'   => 'One line description of product',
+            'type'          => 'textarea',
+        ),
+
+       array(
+            'name'          => 'product_price',
+            'label'         => 'Product price',
+            'description'   => 'Price of the product',
+            'type'          => 'text',
+        )
+      
+     )
+   );
+} 
     
     
 function add_custom_taxonomies() {

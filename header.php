@@ -51,6 +51,18 @@
 			<div class="top grid_12 cf ">
 		
 				<div class="head">
+
+          <?php if(CLOUD): ?>
+          <div id="cc_cart_head">
+            <?php if(CC::is_cart_empty()): ?>
+              <p>Your cart is empty.</p>
+            <?php else: ?>
+              <p>Your Cart: <?php echo CC::cart_subtotal(); ?></p>
+              <p><a href="/view_cart">View Cart</a> | <a href="/checkout">Checkout</a></p>
+            <?php endif; ?>
+          </div>
+          <?php endif; ?>
+
 					<div class="logo">
 						<h1 class="site-title"><a href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
 						<h2 class="site-description"><?php bloginfo( 'description' ); ?></h2>

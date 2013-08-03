@@ -1400,3 +1400,18 @@ padding:6px 9px 5px 9px;
 background: #EE3B0A;
 color:#fff;
 }
+
+/* Cart66 Cloud CSS */
+#cc_cart_head {
+  float: right;
+  padding: 35px 25px 0px 0px;
+  font-weight: bold;
+}
+
+#cc_cart_head p {
+  margin: 3px;
+}
+
+#cc_cart_head a {
+  color: green;
+}

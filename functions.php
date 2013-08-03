@@ -1,4 +1,5 @@
 <?php
+define('CLOUD', class_exists('CC_Cart66Cloud'));
 /**
  * web2feel functions and definitions
  *
@@ -140,6 +141,38 @@ function web2feel_scripts() {
 
 }
 add_action( 'wp_enqueue_scripts', 'web2feel_scripts' );
+
+
+/**
+ * Enqueue scripts for the admin
+ */
+function web2feel_admin_scripts($hook) {
+  if(CLOUD) {
+    // Only include script when working with posts
+    if( 'post.php' != $hook ) { return; }
+    wp_enqueue_script( 'cc-viper-admin', get_template_directory_uri() . '/js/cc-viper-admin.js', array( 'jquery' ), '20130802', true );
+    /* Get list of products from Cart66 Cloud */
+    $cloud_product_prices = array();
+    try {
+      $lib = new CC_Library();
+      $cloud_products = $lib->get_products();
+      if(is_array($cloud_products) && count($cloud_products)) {
+        foreach($cloud_products as $p) {
+          $sku = $p['sku'];
+          $name = $p['name'];
+          $price = $p['price'];
+          $cloud_product_prices[$sku] = $price;
+        }
+        wp_localize_script('cc-viper-admin', 'cc_product_prices', $cloud_product_prices); 
+      }
+    }
+    catch(CC_Exception $e) {
+      CC_Log::write('Unable to retrieve Cart66 Cloud products for localizing cc-viper-admin script');
+    }
+  }
+}
+add_action( 'admin_enqueue_scripts', 'web2feel_admin_scripts' );
+
 
 /* FLush rewrite */
 
